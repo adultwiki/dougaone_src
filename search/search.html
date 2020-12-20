@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="icon" href="../favicon.ico">
     <script src="../libs/jquery/3.5.0/jquery.min.js"></script>
+    <script src="../libs/jszip/jszip.min.js"></script>
+    <script src="../libs/jszip/jszip-utils.min.js"></script>
 </head>
 <body>
 
@@ -150,10 +152,10 @@
                             <!--  -->
                             <script src="/js/imagesloaded.pkgd.min.js"></script>
                             <!-- <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"> -->
-                            </script>
+                           
 
                             <script>
-                            //変数宣言（グローバル）    
+                            //変数宣言
                              var nocategries_serch_cnt =0; //カテゴリ無しの場合の件数カウンタ
                             //===========================================================================//
                             // 検索ワード 分割処理
@@ -224,96 +226,94 @@
                                 $('.search-text-pc').val($.trim(displayWords.split("&s=")[1]))
 
                        
-
+                                
+                      
                             //===========================================================================//
-                            // 検索処理
+                            // 検索関連処理
                             //===========================================================================//
-                                $.ajax({
-                                    url: '../search.xml',
-                                    type: 'GET',
-                                    cache: false,
-                                    dataType: 'xml'
+                            //---------------------------------------------------------------------------
+                            // zip => jsonファイル
+                            //---------------------------------------------------------------------------
+                            JSZipUtils.getBinaryContent('../dougaone_search.zip', function(err, data) {
 
-                                // xml読み込み成功
-                                }).done(function (data) {
+                                if(err) { throw err;}
+                            
+                                JSZip.loadAsync(data).then(function(zip){ 
+                                    return zip.files['dougaone_search.json'].async('text');//テキスト形式でリード
+                                }).then(function(json){
+                                    // console.log(json)
+                                    // テキスト形式 => json形式
+                                    var data = JSON.parse(json)
 
-                                    var searchList = []; //検索条件に当てはまった記事がすべて入るリスト                                
-                                       
-                                    //[検索処理部]================================================
-                                    $(data).find("entry").each(function () {
-                                        //(1)タイトルとタグを取得(+長くてタグに入れなかった女優名)
-                                        //タイトル
-                                        title = $(this).find('title').text()
-                                        tags = $(this).find('tag').text()
-                                        //タグ
-                                        hide_actress_wk = $(this).find('content').text()
-                                        //女優名
-                                        if (hide_actress_wk.split("|")[1] === undefined) {
-                                            hide_actress = ""
-                                        } else {
-                                            hide_actress = hide_actress_wk.split("|")[1]
+                                    // console.log(data)
+                                //---------------------------------------------------------------------------
+                                // 検索処理
+                                //---------------------------------------------------------------------------
+
+                                    var searchList = []; //検索条件に当てはまった記事がすべて入るリスト  
+
+                                    // 検索対象データ（タイトル・タグ・品番）
+                                    for (let i=0; i<data.length; i++){
+                                        SearchTarget = data[i].title + data[i].tags+ data[i].pno;
+
+                                    // 検索キーワードにヒット
+                                    if (SearchTarget.match(escKeywords)) {
+
+                                        if(categories=="ホーム" || categories==""){           //ホームの場合は無条件で出力
+                                                    postUrl = data[i].url
+                                                    imgUrl = data[i].thumbnail
+                                                    searchList.push(postUrl + "|" + imgUrl + "|" + data[i].title);
+                                                }else{
+                                                    if(categories == data[i].categories){             //ホーム以外はカテゴリの一致で出力
+                                                        postUrl = data[i].url
+                                                        imgUrl = data[i].thumbnail
+                                                        searchList.push(postUrl + "|" + imgUrl + "|" + data[i].title);
+                                          
+                                                    }
+
+                                            //カテゴリ縛り無しの件数も取得しておく
+                                            nocategries_serch_cnt +=1;
+                                            // console.log(nocategries_serch_cnt)
                                         }
-                                        SearchTarget = title + tags + hide_actress
-
-                                        xml_category = jQuery.trim($(this).find('category').text())
-
-                   
-
-                                     
-                                        if (SearchTarget.match(escKeywords)) {
-                                    
-                                            if(categories=="ホーム" || categories==""){           //ホームの場合は無条件で出力
-                                                postUrl = "/" + $(this).find('url').text()
-                                                imgUrl = $(this).find('content').text().split('src="')[1].replace('"/>', '')
-                                                searchList.push(postUrl + "|" + imgUrl + "|" + title);
-                                            }else{
-                                                if(categories == xml_category){             //ホーム以外はカテゴリの一致で出力
-                                                    postUrl = "/" + $(this).find('url').text()
-                                                    imgUrl = $(this).find('content').text().split('src="')[1].replace('"/>', '')
-                                                    searchList.push(postUrl + "|" + imgUrl + "|" + title);
-                                                }
-
-                                                //カテゴリ縛り無しの件数も取得しておく
-                                                nocategries_serch_cnt +=1;
-                                                // console.log(nocategries_serch_cnt)
-                                            }
-                                        }
-
                                         
-                                    });
+                                    }
+                                    if(i>=data.length-1)[
+                                    // alert(i)
+                                    ]
+
+                                    }
+
+// console.log(searchList)
 
                                     //[結果表示部]================================================
                                     const displayNum = 30; //1ページに表示する最大件数
 
-   
-
                                     //カテゴリ縛りありでヒット0件　かつ カテゴリ縛りなしでヒット1件以上の場合
                                     if (categories!="ホーム" && searchList.length == 0 && nocategries_serch_cnt > 0) {
 
-                                        // $(".search-nocategories").css('visibility','visible');
-                                        $(".search-nocategories").show()
-                                        $(".resulttext").text("全ジャンルで再検索（" + nocategries_serch_cnt+"件）")
-                                        
-                                        var search_nocategories_words ='search.html?c=ホーム&s=' + $.trim(displayWords.split("&s=")[1])
-                                        $('.search-nocategories a').attr('href', search_nocategories_words);
+                                    // $(".search-nocategories").css('visibility','visible');
+                                    $(".search-nocategories").show()
+                                    $(".resulttext").text("全ジャンルで再検索（" + nocategries_serch_cnt+"件）")
 
-                            
-                                        console.log("カテゴリなしの場合の件数："+ nocategries_serch_cnt)
-                                  
+                                    var search_nocategories_words ='search.html?c=ホーム&s=' + $.trim(displayWords.split("&s=")[1])
+                                    $('.search-nocategories a').attr('href', search_nocategories_words);
+
+
+                                    // console.log("カテゴリなしの場合の件数："+ nocategries_serch_cnt)
+
                                     }
 
                                     //検索ヒット件数の表示
                                     $('.search-num').text("検索結果：" + searchList.length + " 件");
 
 
-
                                     //0件ではない場合
                                     if (searchList.length > 0) {
-                                        $(".next-button-area").show();
+                                    $(".next-button-area").show();
                                     }else{
                                     //0件の場合
-                                        $(".sorrypng").show();    
-                                        $(".gotop").show();    
+                                    $(".sorrypng").show();    
+                                    $(".gotop").show();    
                                     }
 
                                     recNum = 0     //表示するレコードのレコード番号
@@ -324,60 +324,59 @@
 
                                     //2ページ目以降表示
                                     $('#next-button').click(function (e) {
-                                        //ローディングアニメを下方に配置
-                                        $('#loading').css('top', '80%').show();
-                                        n = 0
-                                        outCtrl();
+                                    //ローディングアニメを下方に配置
+                                    $('#loading').css('top', '80%').show();
+                                    n = 0
+                                    outCtrl();
                                     });
 
                                     //ページ表示制御処理
                                     function outCtrl() {
-                                        //全画像の読み込み終了を検知
-                                        $('#container').imagesLoaded(function () {
-                                            $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
-                                            $('article').removeClass("article-hidden");
-                                            //ローディングアニメの消去
-                                            $('#loading').hide()
-                                        });
+                                    //全画像の読み込み終了を検知
+                                    $('#container').imagesLoaded(function () {
+                                        $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
+                                        $('article').removeClass("article-hidden");
+                                        //ローディングアニメの消去
+                                        $('#loading').hide()
+                                    });
 
-                                        while (n < displayNum && recNum < searchList.length) {
-                                            outPut(recNum)
-                                            recNum++
-                                            n++;
-                                        }
+                                    while (n < displayNum && recNum < searchList.length) {
+                                        outPut(recNum)
+                                        recNum++
+                                        n++;
+                                    }
                                     }
                                     //記事追加
                                     function outPut(idx) {
-                                        $('.article-row').append(
-                                            '<article class="article article-summary article-hidden" style="visibility: hidden;"><div class="article-summary-inner">' +
-                                            '<a href="' + searchList[idx].split("|")[0] + ' " class="thumbnail">' +
-                                            '<span style="background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
-                                            '<h1 class="article-title" itemprop="name">' +
-                                            '<a href="' + searchList[idx].split("|")[0] + '"><p class="text-overflow-ellipsis">' + searchList[idx].split("|")[2] + '</p></a>' +
-                                            '</h1></div></article>'
-                                        );
-                                        //次の〇〇件を読むボタンの表示・非表示
-                                        if (n + 1 == displayNum) { //1ページに表示最大件数まで表示したとき
-                                            if (searchList.length > (recNum + 1)) { //もしもサーチリストにまだ残りがあるなら
-                                                if (searchList.length - (recNum + 1) < displayNum) {
-                                                    $('#next-button').text('次の' + (searchList.length - (recNum + 1)) + '件を表示する')
-                                                } else {
-                                                    $('#next-button').text('次の' + displayNum + '件を表示する')
-                                                }
+                                    $('.article-row').append(
+                                        '<article class="article article-summary article-hidden" style="visibility: hidden;"><div class="article-summary-inner">' +
+                                        '<a href="' + searchList[idx].split("|")[0] + ' " class="thumbnail">' +
+                                        '<span style="background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
+                                        '<h1 class="article-title" itemprop="name">' +
+                                        '<a href="' + searchList[idx].split("|")[0] + '"><p class="text-overflow-ellipsis">' + searchList[idx].split("|")[2] + '</p></a>' +
+                                        '</h1></div></article>'
+                                    );
+                                    //次の〇〇件を読むボタンの表示・非表示
+                                    if (n + 1 == displayNum) { //1ページに表示最大件数まで表示したとき
+                                        if (searchList.length > (recNum + 1)) { //もしもサーチリストにまだ残りがあるなら
+                                            if (searchList.length - (recNum + 1) < displayNum) {
+                                                $('#next-button').text('次の' + (searchList.length - (recNum + 1)) + '件を表示する')
+                                            } else {
+                                                $('#next-button').text('次の' + displayNum + '件を表示する')
                                             }
                                         }
-                                        if (searchList.length <= recNum + 1) {
-                                            $("#next-button").remove();
-                                        }
                                     }
-                                // xml読み込み失敗 
-                                }).fail(function () {
-                                    $('.article-row').append(
-                                        '<div style="text-align:center;"><a  href="http://dougaone.com"><h1>エラーが発生しました（すいません）。クリックでトップに戻ります。</h1></a>/</div>'
-                                    );
-                                    // 成功・失敗いずれも
-                                }).always(function () {
-                                });
+                                    if (searchList.length <= recNum + 1) {
+                                        $("#next-button").remove();
+                                    }
+                                    }
+                                //---------------------------------------------------------------------------
+                                    
+                                })                                
+                            });
+
+                                                
+
                             </script>
 
                             <!-- 検索結果表示部分 -->
