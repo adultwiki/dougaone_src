@@ -1,34 +1,143 @@
-// console.log($('#iframe').contents().find('body').html())
 
-// $("#iframe").ready(function(){
-//     console.log("ready");
-
-//     $('iframe:first').contents().find('head')
-
-//     var iframe = $('#iframe').contents();
-//     console.log($('#iframe').contents().find('body').html())
-//     // iframe.find('div').css('background-color', 'black');
-//     // console.log(iframe.find('video').attr('src'));
-
-//     // console.log($(".fc2-video-container").children('video').attr('src'))
-// });
-// $('#iframe').load(function(){
-//     console.log('読み込み完了');
-//     alert('読み込み完了');
-// });
-
-// var iframeOBJ = document.getElementById('#iframe').contentWindow;
-// iframeOBJ.postMessage("メッセージを送る", 'https://adult.contents.fc2.com/embed/1599099?i=TXpjeE16a3lNVGc9&info=0&logo=0');
 
 
 function fc2() {
     // alert("unko")
-    console.log($('#iframe').contents().find('body').html())
+    // console.log($('#iframe').contents().find('body').html())
 
 }
 
+// $(window).on('load', function() {
+//     //DMMの場合、ボタンのリンク先を一旦DMMのトップページにする
+//     $("#link-dmm").attr("href", "https://www.dmm.co.jp/top/")
+
+// });
+
+// const images = document.querySelectorAll('img');
+// images.forEach((image) => {
+//               fetch(image.src)
+//               .then(response => {
+//                 console.log(response.status); // 多分200
+//                 console.log("unko")
+//                 //console.log(response.headers.get('Content-Encoding')); // "gzip"とか
+//               });
+// });
+
+// fetch(imgElem.src, {
+//     method: "GET",
+//   }).then(response => response.text())
+//   .then(text => {
+//     console.log("unko"+text);
+//   });
+
+
+//============================================================
+//(1)画像が遅延で取得できなかった場合、再読み込みする
+//(2)画像が404で取得できなかった場合、ドウガワンコの画像を表示する
+//============================================================
+//+++ 記事ページ +++
+document.addEventListener('DOMContentLoaded', () => {
+
+    
+
+    // ページ中の img 要素を全て取得する
+    const imgElems = document.querySelectorAll('img');
+    var try_cnt=0  
+    for(const imgElem of imgElems) {     
+
+      // 各 img 要素に Error イベント時の処理を付与する
+      imgElem.addEventListener('error', (event) => {
+        
+      //3回再取得にトライ
+
+      if(try_cnt<3){
+                // console.log(try_cnt)
+              var getImg = function(){
+                if(imgElem.src.match(/nowprinting/)==null){
+                    //画像ファイルのURLクエリに日時をつけて、新たに画像を読みに行く
+                    addurl = "?" + new Date().getTime()
+                    imgElem.src = imgElem.src+  addurl     
+                    // console.log(imgElem.src+" "+try_cnt)
+                }
+              }
+              var id = setInterval(function(){
+                    getImg();
+                    try_cnt +=1           
+                    if(try_cnt > 3){clearInterval(id);}
+
+                }, 3000);
+
+        }else{
+           //トライ回数以内に取得できなければ404としてドウガワンコ画像を表示 
+        //    console.log("とれませんでした"+imgElem.src)
+           imgElem.src = "/images/nowprinting.png"
+        }
+    });
+    }
+  });
+
+  //+++ 記事一覧ページ +++
+        $(".article-thumbnail").each(function(i,o){
+
+            //一覧項目ぶん実行される(40)
+
+            // 取得回数カウンター配列
+            cnt = Array(100).fill(0)
+
+            //一覧画像個々のbackgroundimg URLを取得
+            url = $(o).css('background-image').replace('url("', '').replace('")', '')
+            // console.log(i+":"+url)
+            var img = new Image();
+            
+            img.onerror = function() { //エラーの場合
+
+                
+                // console.log(i+"番目を実施")
+                if(cnt[i]<3){
+                    // console.log("err:"+img.src)         
+          
+                    setTimeout(function(){
+                        getImg()
+                        },1000);
+
+                }else{
+                    $(o).css('background-image','url(/images/nowprinting.png)')    
+                }
+
+
+            }
+                 
+            var getImg = function(){
+                // console.log("getimg実行"+"cnt:"+cnt[i])
+                cnt[i] +=1
+                    if(img.src.match(/nowprinting/)==null){
+                        addurl = "?" + new Date().getTime()
+                        img.src = img.src+  addurl     
+                        $(o).css('background-image','url('+img.src+')')    
+                    }
+            }
+            img.src = url;
+
+        });
 
 (function ($) {
+
+    // $(".cover-text").text("chinko") 
+    // //DMMの場合
+    // //ボタン押下時にリンク先を個別作品に変更する
+    // $("#link-dmm").on('click', function () {
+    //     var dmmlink =$('#href-dmm').attr('href'); 
+    //     $(".linkbutton").attr("href", dmmlink)
+    // });
+
+
+//     $('div').on('DOMSubtreeModified propertychange', function() {
+//         // DOMが変更された時に動く処理
+//         console.log("chinko")
+//  });
+
+
+
 
 
     //検索キーワードのカテゴリに現在のページのカテゴリを設定
