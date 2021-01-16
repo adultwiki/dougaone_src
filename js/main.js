@@ -80,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         $(".article-thumbnail").each(function(i,o){
 
             //一覧項目ぶん実行される(40)
-
             // 取得回数カウンター配列
             cnt = Array(100).fill(0)
 
@@ -119,6 +118,66 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = url;
 
         });
+
+  //+++ 検索結果ページ +++
+        function imgchk() {
+            // alert("load finish")
+            // alert(callnum)
+            // i= callnum;
+            $(".search-thumbnail ").each(function(i,o){
+        
+
+                        // console.log(i)
+                        // 取得回数カウンター配列
+                        cnt = Array(1000).fill(0)
+                        //一覧画像個々のbackgroundimg URLを取得
+                        url = $(o).css('background-image').replace('url("', '').replace('")', '')
+                        // console.log(i+":"+url)
+                        var img = new Image();
+                        
+                        img.onerror = function() { //エラーの場合
+
+                                
+                            // console.log(i+"番目を実施")
+                            if(cnt[i]<3){
+                                console.log("err:"+img.src)         
+                    
+                                setTimeout(function(){
+                                    getImg()
+                                    },2000);
+            
+                            }else{
+                                // console.log(cnt)
+                                console.log("i="+i)
+                                
+                                console.log("cnt:"+ cnt[i] +":"+$(o).css('background-image'))
+
+                                $(o).css('background-image','url(/images/nowprinting.png)')    
+                            }
+            
+            
+                        }
+                            
+                        var getImg = function(){
+                            cnt[i] +=1
+                            
+                                if(img.src.match(/nowprinting/)==null){
+                                    addurl = "?" + new Date().getTime()
+                                    img.src = img.src+  addurl     
+                                    $(o).css('background-image','url('+img.src+')')    
+                                }
+                        }
+                        img.src = url;
+                    
+    
+            });
+
+
+
+        }
+//============================================================
+
+
 
 (function ($) {
 

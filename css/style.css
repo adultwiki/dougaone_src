@@ -391,7 +391,8 @@ code {
 .next-button-area {
   margin-top: 50px;
 }
-#next-button {
+#next-button,
+#back-button {
   background-color: #ff4162 !important;
   border: 0;
   color: #fff;
@@ -2121,7 +2122,7 @@ margin-bottom
     padding-bottom: 15px;
   }
   #footer {
-    margin-top: 0px;
+    margin-top: 50px;
   }
   #footer #back-to-top {
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1), inset 0 1px 0 rgba(0,0,0,0.05);
@@ -2135,7 +2136,6 @@ margin-bottom
   }
   .next-button-area {
     margin-top: 30px;
-    margin-bottom: 50px;
   }
   .search-text-pc {
     display: none;

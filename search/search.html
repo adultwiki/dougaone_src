@@ -304,8 +304,8 @@
                                     }
 
                                     //検索ヒット件数の表示
-                                    $('.search-num').text("検索結果：" + searchList.length + " 件");
-
+                                    page = 1;
+                          
 
                                     //0件ではない場合
                                     if (searchList.length > 0) {
@@ -317,41 +317,108 @@
                                     }
 
                                     recNum = 0     //表示するレコードのレコード番号
+                           
 
                                     //1ページ目表示
+                                    //ボタン類の初期設定
+                                    $('#back-button').hide(); //前へボタンを隠す
+                                    $('#next-button').css('width','100%');
                                     n = 0;         //ページ内で表示してる記事の件数
                                     outCtrl();
 
+
                                     //2ページ目以降表示
+                                    //次ボタン
                                     $('#next-button').click(function (e) {
-                                    //ローディングアニメを下方に配置
-                                    $('#loading').css('top', '80%').show();
-                                    n = 0
-                                    outCtrl();
+                                        page +=1
+                                        $('#next-button').css({'width':'49%','float':'right'});
+                                        $('#back-button').css({'width':'49%','float':'left'});
+
+                                        $(".article-summary").remove();   
+                                        $('body, html').scrollTop(0); 
+                                
+                                        //ローディングアニメを下方に配置
+                                        $('#loading').show();
+                                        // $('#loading').css('top', '80%').show();
+                                        n = 0
+                                        outCtrl();
+
+                                        $('#back-button').show();//前へボタンを表示する
+
                                     });
 
+                                    //前ボタン
+                                    $('#back-button').click(function (e) {
+                                        page -=1
+                                        //現在のページで表示されているサムネイルの数
+                                        search_thumbnail_num = $(".search-thumbnail").length    
+
+                                        $(".article-summary").remove();   
+                                        $('body, html').scrollTop(0); 
+                                
+                                        //ローディングアニメを下方に配置
+                                        $('#loading').show();
+                                        // $('#loading').css('top', '80%').show();
+                                        n = 0
+                                        //75 recnum 75    30 + 15    
+
+                                        if(displayNum > search_thumbnail_num){
+                                            // alert(recNum)
+                                            //105       30                          
+                                            recNum -=  (displayNum + search_thumbnail_num)
+                                            $("#next-button").show();
+                                            // $('#back-button').css('width','49%');
+                                            // alert(recNum)
+                                        }else{
+                                            recNum -= displayNum*2 //一回の表示件数×２倍件数戻る 
+                                            if(recNum<=0){
+                                                $('#back-button').hide(); //前へボタンをかくす
+                                                $('#next-button').css('width','100%');
+                                            }
+                                            // alert($(".search-thumbnail").length)
+                                        }
+
+                                        
+                                        outCtrl();
+
+                                    
+
+
+                                    });
+
+
+
+                                    callnum = 0
                                     //ページ表示制御処理
                                     function outCtrl() {
-                                    //全画像の読み込み終了を検知
-                                    $('#container').imagesLoaded(function () {
-                                        $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
-                                        $('article').removeClass("article-hidden");
-                                        //ローディングアニメの消去
-                                        $('#loading').hide()
-                                    });
+                                        if(searchList.length == 0){
+                                            $('.search-num').text("検索結果:" + searchList.length + "件");
+                                        }else{
+                                            $('.search-num').text("検索結果:" + searchList.length + " 件中 "+ page + " ページ目");
+                                        }
+                                   
+                                        //全画像の読み込み終了を検知
+                                        $('#container').imagesLoaded(function () {
+                                            $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
+                                            $('article').removeClass("article-hidden");
+                                            //ローディングアニメの消去
+                                            $('#loading').hide()
+                                            imgchk()　          //非表示画像の再読み込み
+                                            // callnum += displayNum;
+                                        });
 
-                                    while (n < displayNum && recNum < searchList.length) {
-                                        outPut(recNum)
-                                        recNum++
-                                        n++;
-                                    }
+                                        while (n < displayNum && recNum < searchList.length) {
+                                            outPut(recNum)
+                                            recNum++
+                                            n++;
+                                        }
                                     }
                                     //記事追加
                                     function outPut(idx) {
                                     $('.article-row').append(
                                         '<article class="article article-summary article-hidden" style="visibility: hidden;"><div class="article-summary-inner">' +
                                         '<a href="' + searchList[idx].split("|")[0] + ' " class="thumbnail">' +
-                                        '<span style="background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
+                                        '<span style="background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="search-thumbnail thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
                                         '<h1 class="article-title" itemprop="name">' +
                                         '<a href="' + searchList[idx].split("|")[0] + '"><p class="text-overflow-ellipsis">' + searchList[idx].split("|")[2] + '</p></a>' +
                                         '</h1></div></article>'
@@ -360,14 +427,17 @@
                                     if (n + 1 == displayNum) { //1ページに表示最大件数まで表示したとき
                                         if (searchList.length > (recNum + 1)) { //もしもサーチリストにまだ残りがあるなら
                                             if (searchList.length - (recNum + 1) < displayNum) {
-                                                $('#next-button').text('次の' + (searchList.length - (recNum + 1)) + '件を表示する')
+                                                $('#next-button').text('　次の' + (searchList.length - (recNum + 1)) + '件 >>')
                                             } else {
-                                                $('#next-button').text('次の' + displayNum + '件を表示する')
+                                                $('#next-button').text('　次の' + displayNum + '件 >>')
                                             }
+                                            $('#back-button').text('<< 前の' + displayNum + '件　')
                                         }
                                     }
                                     if (searchList.length <= recNum + 1) {
-                                        $("#next-button").remove();
+                                        $("#next-button").hide();
+                                        // $('#back-button').css('width','100%');
+                                        // $("#back-button").hide();
                                     }
                                     }
                                 //---------------------------------------------------------------------------
@@ -389,6 +459,7 @@
 
                             <!-- 次の○○件を表示するボタンcss -->
                             <div class="next-button-area" style="text-align: center;display: none">
+                              <p id="back-button"></p>
                               <p id="next-button"></p>
                             </div>
                             <script>
