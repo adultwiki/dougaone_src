@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 
                             // console.log(i+"番目を実施")
                             if(cnt[i]<3){
-                                console.log("err:"+img.src)         
+                                // console.log("err:"+img.src)         
                     
                                 setTimeout(function(){
                                     getImg()
@@ -148,9 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
                             }else{
                                 // console.log(cnt)
-                                console.log("i="+i)
+                                // console.log("i="+i)
                                 
-                                console.log("cnt:"+ cnt[i] +":"+$(o).css('background-image'))
+                                // console.log("cnt:"+ cnt[i] +":"+$(o).css('background-image'))
 
                                 $(o).css('background-image','url(/images/nowprinting.png)')    
                             }
