@@ -211,8 +211,15 @@ document.addEventListener('DOMContentLoaded', () => {
     $.each(actress,function(i) {
         $('.tag-link-link').each(function(x) {
         
-            if( $(this).text() == actress[i] ){
+                //（タグページ非作成対応 20210126）
+                // タグのリンク先をサーチリンクにする
+                // $(this).attr("href", "/search/search.html?c=" + $('.page-title-link').html().toLowerCase()+ "&s=" + $(this).text()) 
+                $(this).attr("href", "/search/search.html?c=ホーム&s=" + $(this).text()) 
+                //!!! タグページ生成プラグイン「 "hexo-generator-tag": "^1.0.0",」をアンインストール済。復活させる場合は再インストール。
+                if( $(this).text() == actress[i] ){
 
+
+               //女優さんの名前を先頭に持ってくる     
                $(this).text($(this).text() +" ") 
                $('.tag-link-link')[0].before($('.tag-link-link')[x]);
             }

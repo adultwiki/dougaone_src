@@ -350,6 +350,8 @@
                                     //前ボタン
                                     $('#back-button').click(function (e) {
                                         page -=1
+                                        // alert(page)
+                                      
                                         //現在のページで表示されているサムネイルの数
                                         search_thumbnail_num = $(".search-thumbnail").length    
 
@@ -362,8 +364,9 @@
                                         n = 0
                                         //75 recnum 75    30 + 15    
 
+
+                                  
                                         if(displayNum > search_thumbnail_num){
-                                            // alert(recNum)
                                             //105       30                          
                                             recNum -=  (displayNum + search_thumbnail_num)
                                             $("#next-button").show();
@@ -371,12 +374,17 @@
                                             // alert(recNum)
                                         }else{
                                             recNum -= displayNum*2 //一回の表示件数×２倍件数戻る 
-                                            if(recNum<=0){
+                                            // if(recNum<=0){
+                                            //     $('#back-button').hide(); //前へボタンをかくす
+                                            //     $('#next-button').css('width','100%');
+                                            // }
+                                            // alert($(".search-thumbnail").length)
+                                        }
+                                        //一ページ目に戻ったら「前へ」ボタンを隠す
+                                        if(recNum<=0){
                                                 $('#back-button').hide(); //前へボタンをかくす
                                                 $('#next-button').css('width','100%');
                                             }
-                                            // alert($(".search-thumbnail").length)
-                                        }
 
                                         
                                         outCtrl();
@@ -435,6 +443,7 @@
                                         }
                                     }
                                     if (searchList.length <= recNum + 1) {
+                                        //次へボタンを隠す
                                         $("#next-button").hide();
                                         // $('#back-button').css('width','100%');
                                         // $("#back-button").hide();
