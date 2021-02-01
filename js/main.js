@@ -31,6 +31,8 @@ function fc2() {
 //   });
 
 
+
+
 //============================================================
 //(1)画像が遅延で取得できなかった場合、再読み込みする
 //(2)画像が404で取得できなかった場合、ドウガワンコの画像を表示する
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 各 img 要素に Error イベント時の処理を付与する
       imgElem.addEventListener('error', (event) => {
-        
+        // alert("err")
       //3回再取得にトライ
 
       if(try_cnt<3){
@@ -75,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     }
   });
+
+
+
 
   //+++ 記事一覧ページ +++
         $(".article-thumbnail").each(function(i,o){
@@ -118,6 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = url;
 
         });
+
+
+
+
+
 
   //+++ 検索結果ページ +++
         function imgchk() {
