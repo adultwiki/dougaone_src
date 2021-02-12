@@ -170,7 +170,7 @@
                             //(2) 連続スペースを一つに
                                 sendWords = sendWords.replace(/(\s|&nbsp;)+/g,' ');
                             //検索キーワードを取り出す
-                                keyWords = $.trim(sendWords.split("&s=")[1])
+                                keyWords = $.trim(sendWords.split("&s=")[1].split("&n=")[0])
                             //カテゴリを取り出す
                                 categories = $.trim(sendWords.split("&s=")[0])
                             //(3) matchでエラーになるキーワードを置き換え 
@@ -223,8 +223,8 @@
                                 }
 
                             //検索キーワードをモバイル用/PC用検索窓両方に表示
-                                $('.search-text-mobile').val($.trim(displayWords.split("&s=")[1]))
-                                $('.search-text-pc').val($.trim(displayWords.split("&s=")[1]))
+                                $('.search-text-mobile').val(keyWords)
+                                $('.search-text-pc').val(keyWords)
 
                        
                                 
@@ -286,6 +286,23 @@
 
 // console.log(searchList)
 
+                      
+                                    //個別記事をクリックしたときブラウザのスクロール位置をWeb Storageに記憶
+                                    const storage = localStorage;
+                                    $("body").click(function() {
+                                        storage.pageYOffset = window.scrollY;
+                                        storage.locationsearch = location.search;
+                                
+                                    })
+                            
+                                    //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
+                                    $(function(){
+                                        if(location.search == storage.locationsearch){
+                                            $('body, html').scrollTop(storage.pageYOffset)                 
+                                        }
+                                    });
+                                  
+
                                     //[結果表示部]================================================
                                     const displayNum = 30; //1ページに表示する最大件数
 
@@ -319,37 +336,84 @@
 
                                     recNum = 0     //表示するレコードのレコード番号
                            
+                                    //------------------------------------------------
+                                    // 検索ページ → 個別ページ　から戻るボタン押下時対応
+                                    //------------------------------------------------
+                                    //ページパラメータの取得(&n=xx)
+                                    palamPos = location.search.lastIndexOf('&n=')                            
+                                    pagePos = Number(location.search.slice(palamPos+3))
+                                    
+                                    if(Number(location.search.slice(palamPos+3))){
+                                        pagePos = Number(location.search.slice(palamPos+3))
+                                    }else{
+                                        pagePos = 0
+                                    }
+                                   
+                                    // alert(pagePos)
+                                    //------------------------------------------------
+                                    //２ページ目以降から戻ってきた場合はそのページから読む                                    
+                                    //------------------------------------------------
+                                    if(pagePos >=30){
+                                        recNum = pagePos
+                                        afterPage2()　//2ページ目以降表示処理
+                                    }else{
+                               
+                                    //------------------------------------------------
+                                    // 検索一発目 もしくは 1ページ目からの戻りの場合はそのまま表示
+                                    //------------------------------------------------
+                                    //URLパラメータのセット
+                                    history.replaceState('','',location.search.split("&n=")[0] + '&n=' + recNum);
+                                    $('body, html').scrollTop(0); 
+                                        //ボタン類の初期設定
+                                        $('#back-button').hide(); //前へボタンを隠す
+                                        $('#next-button').css('width','100%');
+                                        n = 0;         //ページ内で表示してる記事の件数
+                                        outCtrl();
+                                    }
 
-                                    //1ページ目表示
-                                    //ボタン類の初期設定
-                                    $('#back-button').hide(); //前へボタンを隠す
-                                    $('#next-button').css('width','100%');
-                                    n = 0;         //ページ内で表示してる記事の件数
-                                    outCtrl();
-
-
-                                    //2ページ目以降表示
-                                    //次ボタン
+                                    
+                                    //次ボタンを押したら2ページ目以降表示
                                     $('#next-button').click(function (e) {
-                                        page +=1
+                                        afterPage2()
+                             
+                                    });
+
+                                    //2ページ目以降表示処理
+                                    function afterPage2() {
+                                        //URLパラメータのセット
+                                        history.replaceState('','',location.search.split("&n=")[0] + '&n=' + recNum);
+
+                                        // page +=1
+                                        page = recNum / displayNum +1
+
+                                        // alert(page)
                                         $('#next-button').css({'width':'49%','float':'right'});
                                         $('#back-button').css({'width':'49%','float':'left'});
 
                                         $(".article-summary").remove();   
                                         $('body, html').scrollTop(0); 
-                                
-                                        //ローディングアニメを下方に配置
+
+                                        //ローディングアニメを配置
                                         $('#loading').show();
-                                        // $('#loading').css('top', '80%').show();
+                                 
                                         n = 0
                                         outCtrl();
 
                                         $('#back-button').show();//前へボタンを表示する
-
-                                    });
+                                        $('#back-button').text('<< 前の' + displayNum + '件　')
+                                    }
 
                                     //前ボタン
                                     $('#back-button').click(function (e) {
+                                        //最終ページの場合URLパラメータの数字を加工
+                                        if(recNum % displayNum !=0){
+                                            backNum =  (displayNum *  Math.floor(recNum / displayNum) + 30) -60 
+                                        }else{
+                                            backNum = Number(recNum)-60
+                                        }
+
+                                        history.replaceState('','',location.search.split("&n=")[0] + '&n=' + backNum);
+
                                         page -=1
                                         // alert(page)
                                       
@@ -359,21 +423,23 @@
                                         $(".article-summary").remove();   
                                         $('body, html').scrollTop(0); 
                                 
-                                        //ローディングアニメを下方に配置
+                                        //ローディングアニメを配置
                                         $('#loading').show();
-                                        // $('#loading').css('top', '80%').show();
+
                                         n = 0
                                         //75 recnum 75    30 + 15    
 
 
                                   
                                         if(displayNum > search_thumbnail_num){
+                              
                                             //105       30                          
                                             recNum -=  (displayNum + search_thumbnail_num)
                                             $("#next-button").show();
                                             // $('#back-button').css('width','49%');
                                             // alert(recNum)
                                         }else{
+                                            
                                             recNum -= displayNum*2 //一回の表示件数×２倍件数戻る 
                                             // if(recNum<=0){
                                             //     $('#back-button').hide(); //前へボタンをかくす
@@ -424,16 +490,18 @@
                                     }
                                     //記事追加
                                     function outPut(idx) {
+                                   
                                     $('.article-row').append(
                                         '<article class="article article-summary article-hidden" style="visibility: hidden;"><div class="article-summary-inner">' +
                                         '<a href="' + searchList[idx].split("|")[0] + ' " class="thumbnail">' +
-                                        '<span style="background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="search-thumbnail thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
+                                        '<span style="background-color: rgb(239, 239, 239);background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="search-thumbnail thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
                                         '<h1 class="article-title" itemprop="name">' +
                                         '<a href="' + searchList[idx].split("|")[0] + '"><p class="text-overflow-ellipsis">' + searchList[idx].split("|")[2] + '</p></a>' +
                                         '</h1></div></article>'
                                     );
                                     //次の〇〇件を読むボタンの表示・非表示
                                     if (n + 1 == displayNum) { //1ページに表示最大件数まで表示したとき
+                                      
                                         if (searchList.length > (recNum + 1)) { //もしもサーチリストにまだ残りがあるなら
                                             if (searchList.length - (recNum + 1) < displayNum) {
                                                 $('#next-button').text('　次の' + (searchList.length - (recNum + 1)) + '件 >>')
@@ -446,10 +514,12 @@
                                     if (searchList.length <= recNum + 1) {
                                         //次へボタンを隠す
                                         $("#next-button").hide();
+                                        // alert("satirisuto"+searchList.length)
+                                        // alert("かくす"+recNum + 1)
                                         // $('#back-button').css('width','100%');
                                         // $("#back-button").hide();
                                     }
-                                    }
+                                  }
                                 //---------------------------------------------------------------------------
                                     
                                 })                                
