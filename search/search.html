@@ -37,7 +37,7 @@
 
     <div id="wrap">
         <!-- ヘッダー -->
-        <header id="header">
+        <header id="header" >
             <div id="header-outer" class="outer">
                 <div class="container">
 
@@ -232,21 +232,92 @@
                             //===========================================================================//
                             // 検索関連処理
                             //===========================================================================//
-                            //---------------------------------------------------------------------------
-                            // zip => jsonファイル
-                            //---------------------------------------------------------------------------
-                            JSZipUtils.getBinaryContent('../dougaone_search.zip', function(err, data) {
+                            //localStorage
+                            const storage = localStorage;
+                           
 
-                                if(err) { throw err;}
+                            //------------------------------------------
+                            // 検索データキャッシュ使用判断
+                            //------------------------------------------
+                            //検索ファイルのETagを取得
+                            if(window.XMLHttpRequest){
+                                
+                                var re=new XMLHttpRequest();
+                            }else if(window.ActiveXOject){
+                                 var re=new ActiveXObject('Microsoft.XMLHTTP');
+                            }
+                   
+                                re.open('HEAD','../dougaone_search.zip',true);
+                                re.onreadystatechange=tsp;
+                                re.send(null);
+                 
+                            function tsp(){
+                                if(re.readyState==4&&re.status==200){
+                                        zipEtag =re.getResponseHeader('etag');
+                                        zipEtag = zipEtag.split("-")[0]
+
+                                        // zipEtag =re.getAllResponseHeaders();
+                                        // alert(zipEtag);
+                                        console.log(zipEtag);
+                                        selectData(zipEtag)
+                                        
+                                }
+                            }
+
+
+                            //検索データキャッシュ使用判断
+                            function selectData(data) {
+                                if(zipEtag == storage.zipEtag){  // ETagが同一なら
+
+                                    // ローカルストレージに退避した検索元データを使用する
+
+                                    // 退避データ整合性チェック
+                                    // alert(JSON.parse(localStorage.data).length)
+                                    // alert(site.posts.length)
+
+                                    console.log("ローカルストレージ使用")
+                                    
+                                    // 検索処理を実行
+                                    search(JSON.parse(localStorage.data));
                             
-                                JSZip.loadAsync(data).then(function(zip){ 
-                                    return zip.files['dougaone_search.json'].async('text');//テキスト形式でリード
-                                }).then(function(json){
-                                    // console.log(json)
-                                    // テキスト形式 => json形式
-                                    var data = JSON.parse(json)
+                                }else{                             // ETagが違うなら
+                                        // alert("新規取得使用")
+                                        console.log("新規取得使用")
 
-                                    // console.log(data)
+                                        //---------------------------------------------------------------------------
+                                        // zipファイルを取得 => 検索元データ取得
+                                        //---------------------------------------------------------------------------
+                                        JSZipUtils.getBinaryContent('../dougaone_search.zip', function(err, data) { 
+
+                                                if(err) { throw err;}
+
+                                                JSZip.loadAsync(data).then(function(zip){ 
+                                                    return zip.files['dougaone_search.json'].async('text');//テキスト形式でリード
+                                                }).then(function(json){
+                                                    // テキスト形式 => json形式
+                                                    var data = JSON.parse(json)
+
+                                                    // console.log(data)
+
+                                                    // ローカルストレージに検索元データとデータの更新日付を格納
+                                                    storage.zipEtag = zipEtag;
+
+                                                    storage.data = json;
+                                                    // storage.data = data;
+
+                                                    // 検索処理を実行
+                                                    search(data);
+                                                    
+                                                })                                
+                                        });
+                                    }
+                            }
+
+
+
+//--------------------------------------------------------------------------------------------------------------------  
+                    function search(data) {                          
+                            
                                 //---------------------------------------------------------------------------
                                 // 検索処理
                                 //---------------------------------------------------------------------------
@@ -284,23 +355,22 @@
 
                                     }
 
-// console.log(searchList)
 
                       
                                     //個別記事をクリックしたときブラウザのスクロール位置をWeb Storageに記憶
-                                    const storage = localStorage;
+                                    
                                     $("body").click(function() {
                                         storage.pageYOffset = window.scrollY;
                                         storage.locationsearch = location.search;
                                 
                                     })
                             
-                                    //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
-                                    $(function(){
-                                        if(location.search == storage.locationsearch){
-                                            $('body, html').scrollTop(storage.pageYOffset)                 
-                                        }
-                                    });
+                                    // //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
+                                    // $(function(){
+                                    //     if(location.search == storage.locationsearch){
+                                    //         $('body, html').scrollTop(storage.pageYOffset)                 
+                                    //     }
+                                    // });
                                   
 
                                     //[結果表示部]================================================
@@ -474,10 +544,15 @@
                                    
                                         //全画像の読み込み終了を検知
                                         $('#container').imagesLoaded(function () {
+                                                //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
+                                                    if(location.search == storage.locationsearch){
+                                                        $('body, html').scrollTop(storage.pageYOffset)                 
+                                                    }
                                             $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
                                             $('article').removeClass("article-hidden");
                                             //ローディングアニメの消去
                                             $('#loading').hide()
+                                        
                                             imgchk()　          //非表示画像の再読み込み
                                             // callnum += displayNum;
                                         });
@@ -520,11 +595,8 @@
                                         // $("#back-button").hide();
                                     }
                                   }
-                                //---------------------------------------------------------------------------
-                                    
-                                })                                
-                            });
-
+                    }                                  
+//-----------------------------------------------------------------------------------------------------------------------------------------
                                                 
 
                             </script>
