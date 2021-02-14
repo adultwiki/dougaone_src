@@ -136,7 +136,7 @@
                 </div>
             </div>
         </header>
-        <div class="container">
+        <div class="container"  id='main-area' style="height: 10000px;">
             <div class="main-body container-inner">
                 <div class="main-body-inner">
                     <section id="main">
@@ -359,19 +359,13 @@
                       
                                     //個別記事をクリックしたときブラウザのスクロール位置をWeb Storageに記憶
                                     
-                                    $("body").click(function() {
-                                        storage.pageYOffset = window.scrollY;
-                                        storage.locationsearch = location.search;
+                                    // $("body").click(function() {
+                                    //     storage.pageYOffset = window.scrollY;
+                                    //     storage.locationsearch = location.search;
                                 
-                                    })
+                                    // })
                             
-                                    // //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
-                                    // $(function(){
-                                    //     if(location.search == storage.locationsearch){
-                                    //         $('body, html').scrollTop(storage.pageYOffset)                 
-                                    //     }
-                                    // });
-                                  
+                               
 
                                     //[結果表示部]================================================
                                     const displayNum = 30; //1ページに表示する最大件数
@@ -397,7 +391,7 @@
 
                                     //0件ではない場合
                                     if (searchList.length > 0) {
-                                    $(".next-button-area").show();
+                                    // $(".next-button-area").show();
                                     }else{
                                     //0件の場合
                                     $(".sorrypng").show();    
@@ -405,7 +399,7 @@
                                     }
 
                                     recNum = 0     //表示するレコードのレコード番号
-                           
+                                    // $('#footer').hide()
                                     //------------------------------------------------
                                     // 検索ページ → 個別ページ　から戻るボタン押下時対応
                                     //------------------------------------------------
@@ -433,7 +427,7 @@
                                     //------------------------------------------------
                                     //URLパラメータのセット
                                     history.replaceState('','',location.search.split("&n=")[0] + '&n=' + recNum);
-                                    $('body, html').scrollTop(0); 
+                                    // $('body, html').scrollTop(0); 
                                         //ボタン類の初期設定
                                         $('#back-button').hide(); //前へボタンを隠す
                                         $('#next-button').css('width','100%');
@@ -444,6 +438,7 @@
                                     
                                     //次ボタンを押したら2ページ目以降表示
                                     $('#next-button').click(function (e) {
+                                        $('body, html').scrollTop(0);
                                         afterPage2()
                              
                                     });
@@ -461,7 +456,7 @@
                                         $('#back-button').css({'width':'49%','float':'left'});
 
                                         $(".article-summary").remove();   
-                                        $('body, html').scrollTop(0); 
+                                        // $('body, html').scrollTop(0); 
 
                                         //ローディングアニメを配置
                                         $('#loading').show();
@@ -536,6 +531,8 @@
                                     callnum = 0
                                     //ページ表示制御処理
                                     function outCtrl() {
+                                
+                                    
                                         if(searchList.length == 0){
                                             $('.search-num').text("検索結果:" + searchList.length + "件");
                                         }else{
@@ -545,31 +542,48 @@
                                         //全画像の読み込み終了を検知
                                         $('#container').imagesLoaded(function () {
                                                 //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
-                                                    if(location.search == storage.locationsearch){
-                                                        $('body, html').scrollTop(storage.pageYOffset)                 
-                                                    }
+                                                    // if(location.search == storage.locationsearch){
+                                                    //     $('body, html').scrollTop(storage.pageYOffset)                 
+                                                    // }
+
+                   
+
+
+
+
+
                                             $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
                                             $('article').removeClass("article-hidden");
+                                            $(".next-button-area").fadeIn('slow');
+                                            $("#footer").fadeIn('slow');
+                                            $("#main-area").css('height', '')
                                             //ローディングアニメの消去
                                             $('#loading').hide()
                                         
                                             imgchk()　          //非表示画像の再読み込み
+                        
+
+
                                             // callnum += displayNum;
                                         });
 
                                         while (n < displayNum && recNum < searchList.length) {
-                                            outPut(recNum)
+
+                                                outPut(recNum)
+                                        
+                                            // setTimeout(function(){outPut(recNum)},100);
                                             recNum++
                                             n++;
+                                            
                                         }
                                     }
                                     //記事追加
                                     function outPut(idx) {
-                                   
+                                //   console.log(idx)
                                     $('.article-row').append(
                                         '<article class="article article-summary article-hidden" style="visibility: hidden;"><div class="article-summary-inner">' +
                                         '<a href="' + searchList[idx].split("|")[0] + ' " class="thumbnail">' +
-                                        '<span style="background-color: rgb(239, 239, 239);background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="search-thumbnail thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
+                                       '<span style="background-color: rgb(239, 239, 239);background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="search-thumbnail thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
                                         '<h1 class="article-title" itemprop="name">' +
                                         '<a href="' + searchList[idx].split("|")[0] + '"><p class="text-overflow-ellipsis">' + searchList[idx].split("|")[2] + '</p></a>' +
                                         '</h1></div></article>'
@@ -629,7 +643,7 @@
         </div>
 
         <!-- footer -->
-        <footer id="footer">
+        <footer id="footer" style="display: none;">
             <div class="container">
                 <div class="container-inner">
                     <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>

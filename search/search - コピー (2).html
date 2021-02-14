@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:4000/ -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>検索結果</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ドウガワン.com">
+    <meta property="og:url" content="https://dougaone.com/index.html">
+    <meta property="og:site_name" content="ドウガワン.com">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="article:author" content="DougaOne">
+    <meta name="twitter:card" content="summary">
+    <link rel="alternate" href="/" title="ドウガワン.com" type="application/atom+xml">
+    <link rel="stylesheet" href="../libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="../libs/source-code-pro/styles.css">
+    <link rel="stylesheet" href="../css/loaders.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" href="../favicon.ico">
+    <script src="../libs/jquery/3.5.0/jquery.min.js"></script>
+    <script src="../libs/jszip/jszip.js"></script>
+    <!-- <script src="../libs/jszip/jszip.min.js"></script> -->
+    <script src="../libs/jszip/jszip-utils.min.js"></script>
+</head>
+<body>
+
+    <!-- ローディングアニメーション -->
+    <div class="loader" id="loading">
+        <div class="ball-pulse">
+            <div></div><div>
+            </div><div></div>
+        </div>
+    </div>
+
+    <div id="wrap">
+        <!-- ヘッダー -->
+        <header id="header" >
+            <div id="header-outer" class="outer">
+                <div class="container">
+
+                    <div class="container-inner">
+                        <!-- トップヘッダ -->
+                        <div id="header-title">
+                            <!--（１）ロゴ -->
+                            <a id="top-logo-link" href="/" >
+                                <div style="margin-left: auto;margin-right: auto;">
+                                    <img class="logo-size" style=""  src="/images/dougaone.png"/>
+                                </div>
+                            </a>
+
+
+
+                            <!--（１）ロゴ -->
+                            <!-- <a id="top-logo-link" href="/">
+                                <div class="logo"
+                                    style="margin-left: auto;margin-right: auto;background-image: url(https://dougaone.com/css/images/dougaone.png)">
+                                </div>
+                            </a> -->
+                            <!--（２）ロゴ横サブタイトル（未使用） -->
+                        </div>
+                        <!--（３）カテゴリメニュー -->
+                        <div id="header-inner" class="nav-container">
+                            <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                            <div class="nav-container-inner">
+                                <ul id="main-nav">
+                                    <!-- A.カテゴリメニュー：直書きver -->
+                                    <li class="main-nav-list-item">
+                                        <a class="main-nav-list-link" href="/" name="ホーム">全ジャンル</a>
+                                    </li>
+                                    <li class="main-nav-list-item">
+                                        <a class="main-nav-list-link" href="/categories/av/" name="av">AV</a>
+                                    </li>
+                                    <li class="main-nav-list-item">
+                                        <a class="main-nav-list-link" href="/categories/amateur/" name="amateur">素人</a>
+                                        <!-- <a class="main-nav-list-link" href="/categories/%E7%B4%A0%E4%BA%BA/">素人</a> -->
+                                    </li>
+                                </ul>
+                                <!--（４）検索窓 -->
+                                <nav id="sub-nav">
+                                    <div id="search-form-wrap">
+                                        <form class="search-form" action="/search/search.html">
+                                            <!-- 検索ボタン -->
+                                            <i class="fa fa-search search-button" style="color: rgba(255,255,255,0.7);
+                                              font-size: 1rem;padding-right: 2px;"></i>
+                                            <!-- 検索テキスト -->
+                                            <input class="search-category" type="hidden" name="c" value="">    
+                                            <!-- <input id="search-category" type="hidden" name="c" value="">     -->
+                                            <input type="search" class="search-form-input search-text-pc"
+                                                style="padding-left: 0.5rem;" placeholder="検索" name="s" />
+
+                                        </form>
+                                        <script src="../js/insight.js"></script>
+                                    </div>
+                                </nav>
+                            </div>
+                            <!-- （４．５） モバイル用検索窓 -->
+                            <form class="search-form-mobile" action="/search/search.html" id="search-form-mobile"
+                                style="display:none;">
+                                <div
+                                    style="width:100%;text-align: center;background-color: whitesmoke;margin-bottom: 5px;">
+                                    <!-- <input id="search-category" type="hidden" name="c" value="">     -->
+                                    <input class="search-category" type="hidden" name="c" value="">    
+                                    <input type="search" class="search-form-input search-text-mobile" style="color:black;width: 100%;
+                                        padding-left: 0.5rem;height: 2rem !important;" placeholder="検索" name="s" />
+                                </div>
+                            </form>
+                        </div>
+                        <!-- スペーサー -->
+                        <div class="spacer-01" style=""></div>
+
+                        <div>
+                            <p class="search-num"><b></b></p>
+                   
+                            <div class="sorrypng" style="width:100%;margin-top: 2em; margin-left: auto;margin-right: auto;text-align: center;display: none">
+                                <img class="sorry" style=""  src="/images/sorry.png"/>
+                            </div>
+
+                            <div class="search-nocategories"  style="text-align: center;padding-top: 3rem;display: none;">
+                                <a style="font-size: 1.1rem;"
+                                    href="">
+                                    <b class="resulttext">none</b>                                 
+                                </a>
+                            </div>
+
+                            <div class="gotop" style="text-align: center;padding-top: 3rem;padding-bottom: 2rem; display: none;">
+                                <a  style="font-size: 1.1rem;" href="/">
+                                    <b>TOPに戻る</b>                                 
+                                </a>
+                            </div>                   
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+                            <h1 class="header">
+
+                                <em class="page-title-link" data-url="home">ホーム</em>
+
+                            </h1>
+                        </div>
+                        <div class="main-body-content">
+                            <!-- 記事一覧ページ -->
+
+                            <!--  -->
+                            <script src="/js/imagesloaded.pkgd.min.js"></script>
+                            <!-- <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"> -->
+                           
+
+                            <script>
+                            //変数宣言
+                             var nocategries_serch_cnt =0; //カテゴリ無しの場合の件数カウンタ
+                            //===========================================================================//
+                            // 検索ワード 分割処理
+                            //===========================================================================//
+                            //検索ワードとカテゴリを受け取り
+                                Words =$.trim(decodeURIComponent(location.search).split("?c=")[1])
+                                
+                            //(1) ↑で半角スペースが「＋」に置き換わるので半角スペースに戻す
+                                sendWords = Words.replace(/\+/g," ")
+                                displayWords = sendWords
+                            //(2) 連続スペースを一つに
+                                sendWords = sendWords.replace(/(\s|&nbsp;)+/g,' ');
+                            //検索キーワードを取り出す
+                                keyWords = $.trim(sendWords.split("&s=")[1].split("&n=")[0])
+                            //カテゴリを取り出す
+                                categories = $.trim(sendWords.split("&s=")[0])
+                            //(3) matchでエラーになるキーワードを置き換え 
+                                escKeywords = keyWords.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&'); 
+                            //(4) スペースでキーワードを分割    
+                                escKeywords = escKeywords.split(" ") 
+                            //(5) 正規表現パラメータに変換
+                                multi_words = "^" 
+                                $.each(escKeywords, function(i, val) {
+                                        multi_words = multi_words + "(?=.*"+ jQuery.trim(val)+")" 
+                                       // console.log(i+":"+"(?=.*"+ jQuery.trim(val)+")");
+                                });                
+                                escKeywords = new RegExp(multi_words)
+                            //===========================================================================//
+                            // その他の処理
+                            //===========================================================================//                                 
+                            //トップバナーとフッターのバナー遷移先を遷移元のカテゴリに再設定
+                                if(categories != 'ホーム'){
+                                    if(categories ==""){         //タグページからの遷移の場合
+                                        $('#top-logo-link').attr('href', '/');          
+                                        $('.logo-wrap a').attr('href', '/');
+                                        $('.gotop a').attr('href', '/');
+
+                                    }else{
+                                        $('#top-logo-link').attr('href', '/categories/' + categories);          
+                                        $('.logo-wrap a').attr('href', '/categories/' + categories);
+                                        $('.gotop a').attr('href', '/categories/' + categories);
+
+                                    }
+                            
+                                }
+                            //遷移元のカテゴリの背景を赤くする
+                                $('#main-nav > li > .main-nav-list-link').each(function () {  
+                                 
+                                        // if ($(this).html().toUpperCase() == categories) {
+                                        if ($(this).attr('name') == categories) {
+                                            $(this).addClass('current');
+                                            $(".page-title-link").text(categories);                                            
+                                        } else if ($(this).attr('href') == $('.page-title-link').attr('data-url')) {
+                                            $(this).addClass('current');
+                                 
+                                        }                                
+                                });
+
+                            //PC用検索窓 or モバイル用検索窓の表示・隠蔽
+                                if ($(window).width() > 479) {
+                                    $("#search-form-mobile").hide();
+                                } else {
+                                    $("#search-form-mobile").show();
+                                }
+
+                            //検索キーワードをモバイル用/PC用検索窓両方に表示
+                                $('.search-text-mobile').val(keyWords)
+                                $('.search-text-pc').val(keyWords)
+
+                       
+                                
+                      
+                            //===========================================================================//
+                            // 検索関連処理
+                            //===========================================================================//
+                            //localStorage
+                            const storage = localStorage;
+                           
+
+                            //------------------------------------------
+                            // 検索データキャッシュ使用判断
+                            //------------------------------------------
+                            //検索ファイルのETagを取得
+                            if(window.XMLHttpRequest){
+                                
+                                var re=new XMLHttpRequest();
+                            }else if(window.ActiveXOject){
+                                 var re=new ActiveXObject('Microsoft.XMLHTTP');
+                            }
+                   
+                                re.open('HEAD','../dougaone_search.zip',true);
+                                re.onreadystatechange=tsp;
+                                re.send(null);
+                 
+                            function tsp(){
+                                if(re.readyState==4&&re.status==200){
+                                        zipEtag =re.getResponseHeader('etag');
+                                        zipEtag = zipEtag.split("-")[0]
+
+                                        // zipEtag =re.getAllResponseHeaders();
+                                        // alert(zipEtag);
+                                        console.log(zipEtag);
+                                        selectData(zipEtag)
+                                        
+                                }
+                            }
+
+
+                            //検索データキャッシュ使用判断
+                            function selectData(data) {
+                                if(zipEtag == storage.zipEtag){  // ETagが同一なら
+
+                                    // ローカルストレージに退避した検索元データを使用する
+
+                                    // 退避データ整合性チェック
+                                    // alert(JSON.parse(localStorage.data).length)
+                                    // alert(site.posts.length)
+
+                                    console.log("ローカルストレージ使用")
+                                    
+                                    // 検索処理を実行
+                                    search(JSON.parse(localStorage.data));
+                            
+                                }else{                             // ETagが違うなら
+                                        // alert("新規取得使用")
+                                        console.log("新規取得使用")
+
+                                        //---------------------------------------------------------------------------
+                                        // zipファイルを取得 => 検索元データ取得
+                                        //---------------------------------------------------------------------------
+                                        JSZipUtils.getBinaryContent('../dougaone_search.zip', function(err, data) { 
+
+                                                if(err) { throw err;}
+
+                                                JSZip.loadAsync(data).then(function(zip){ 
+                                                    return zip.files['dougaone_search.json'].async('text');//テキスト形式でリード
+                                                }).then(function(json){
+                                                    // テキスト形式 => json形式
+                                                    var data = JSON.parse(json)
+
+                                                    // console.log(data)
+
+                                                    // ローカルストレージに検索元データとデータの更新日付を格納
+                                                    storage.zipEtag = zipEtag;
+
+                                                    storage.data = json;
+                                                    // storage.data = data;
+
+                                                    // 検索処理を実行
+                                                    search(data);
+                                                    
+                                                })                                
+                                        });
+                                    }
+                            }
+
+
+
+//--------------------------------------------------------------------------------------------------------------------  
+                    function search(data) {                          
+                            
+                                //---------------------------------------------------------------------------
+                                // 検索処理
+                                //---------------------------------------------------------------------------
+
+                                    var searchList = []; //検索条件に当てはまった記事がすべて入るリスト  
+
+                                    // 検索対象データ（タイトル・タグ・品番）
+                                    for (let i=0; i<data.length; i++){
+                                        SearchTarget = data[i].title + data[i].tags+ data[i].pno;
+
+                                    // 検索キーワードにヒット
+                                    if (SearchTarget.match(escKeywords)) {
+
+                                        if(categories=="ホーム" || categories==""){           //ホームの場合は無条件で出力
+                                                    postUrl = data[i].url
+                                                    imgUrl = data[i].thumbnail
+                                                    searchList.push(postUrl + "|" + imgUrl + "|" + data[i].title);
+                                                }else{
+                                                    if(categories == data[i].categories){             //ホーム以外はカテゴリの一致で出力
+                                                        postUrl = data[i].url
+                                                        imgUrl = data[i].thumbnail
+                                                        searchList.push(postUrl + "|" + imgUrl + "|" + data[i].title);
+                                          
+                                                    }
+
+                                            //カテゴリ縛り無しの件数も取得しておく
+                                            nocategries_serch_cnt +=1;
+                                            // console.log(nocategries_serch_cnt)
+                                        }
+                                        
+                                    }
+                                    if(i>=data.length-1)[
+                                    // alert(i)
+                                    ]
+
+                                    }
+
+
+                      
+                                    //個別記事をクリックしたときブラウザのスクロール位置をWeb Storageに記憶
+                                    
+                                    $("body").click(function() {
+                                        storage.pageYOffset = window.scrollY;
+                                        storage.locationsearch = location.search;
+                                
+                                    })
+                            
+                                    // //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
+                                    // $(function(){
+                                    //     if(location.search == storage.locationsearch){
+                                    //         $('body, html').scrollTop(storage.pageYOffset)                 
+                                    //     }
+                                    // });
+                                  
+
+                                    //[結果表示部]================================================
+                                    const displayNum = 30; //1ページに表示する最大件数
+
+                                    //カテゴリ縛りありでヒット0件　かつ カテゴリ縛りなしでヒット1件以上の場合
+                                    if (categories!="ホーム" && searchList.length == 0 && nocategries_serch_cnt > 0) {
+
+                                    // $(".search-nocategories").css('visibility','visible');
+                                    $(".search-nocategories").show()
+                                    $(".resulttext").text("全ジャンルで再検索（" + nocategries_serch_cnt+"件）")
+
+                                    var search_nocategories_words ='search.html?c=ホーム&s=' + $.trim(displayWords.split("&s=")[1])
+                                    $('.search-nocategories a').attr('href', search_nocategories_words);
+
+
+                                    // console.log("カテゴリなしの場合の件数："+ nocategries_serch_cnt)
+
+                                    }
+
+                                    //検索ヒット件数の表示
+                                    page = 1;
+                          
+
+                                    //0件ではない場合
+                                    if (searchList.length > 0) {
+                                    $(".next-button-area").show();
+                                    }else{
+                                    //0件の場合
+                                    $(".sorrypng").show();    
+                                    $(".gotop").show();    
+                                    }
+
+                                    recNum = 0     //表示するレコードのレコード番号
+                           
+                                    //------------------------------------------------
+                                    // 検索ページ → 個別ページ　から戻るボタン押下時対応
+                                    //------------------------------------------------
+                                    //ページパラメータの取得(&n=xx)
+                                    palamPos = location.search.lastIndexOf('&n=')                            
+                                    pagePos = Number(location.search.slice(palamPos+3))
+                                    
+                                    if(Number(location.search.slice(palamPos+3))){
+                                        pagePos = Number(location.search.slice(palamPos+3))
+                                    }else{
+                                        pagePos = 0
+                                    }
+                                   
+                                    // alert(pagePos)
+                                    //------------------------------------------------
+                                    //２ページ目以降から戻ってきた場合はそのページから読む                                    
+                                    //------------------------------------------------
+                                    if(pagePos >=30){
+                                        recNum = pagePos
+                                        afterPage2()　//2ページ目以降表示処理
+                                    }else{
+                               
+                                    //------------------------------------------------
+                                    // 検索一発目 もしくは 1ページ目からの戻りの場合はそのまま表示
+                                    //------------------------------------------------
+                                    //URLパラメータのセット
+                                    history.replaceState('','',location.search.split("&n=")[0] + '&n=' + recNum);
+                                    $('body, html').scrollTop(0); 
+                                        //ボタン類の初期設定
+                                        $('#back-button').hide(); //前へボタンを隠す
+                                        $('#next-button').css('width','100%');
+                                        n = 0;         //ページ内で表示してる記事の件数
+                                        outCtrl();
+                                    }
+
+                                    
+                                    //次ボタンを押したら2ページ目以降表示
+                                    $('#next-button').click(function (e) {
+                                        afterPage2()
+                             
+                                    });
+
+                                    //2ページ目以降表示処理
+                                    function afterPage2() {
+                                        //URLパラメータのセット
+                                        history.replaceState('','',location.search.split("&n=")[0] + '&n=' + recNum);
+
+                                        // page +=1
+                                        page = recNum / displayNum +1
+
+                                        // alert(page)
+                                        $('#next-button').css({'width':'49%','float':'right'});
+                                        $('#back-button').css({'width':'49%','float':'left'});
+
+                                        $(".article-summary").remove();   
+                                        $('body, html').scrollTop(0); 
+
+                                        //ローディングアニメを配置
+                                        $('#loading').show();
+                                 
+                                        n = 0
+                                        outCtrl();
+
+                                        $('#back-button').show();//前へボタンを表示する
+                                        $('#back-button').text('<< 前の' + displayNum + '件　')
+                                    }
+
+                                    //前ボタン
+                                    $('#back-button').click(function (e) {
+                                        //最終ページの場合URLパラメータの数字を加工
+                                        if(recNum % displayNum !=0){
+                                            backNum =  (displayNum *  Math.floor(recNum / displayNum) + 30) -60 
+                                        }else{
+                                            backNum = Number(recNum)-60
+                                        }
+
+                                        history.replaceState('','',location.search.split("&n=")[0] + '&n=' + backNum);
+
+                                        page -=1
+                                        // alert(page)
+                                      
+                                        //現在のページで表示されているサムネイルの数
+                                        search_thumbnail_num = $(".search-thumbnail").length    
+
+                                        $(".article-summary").remove();   
+                                        $('body, html').scrollTop(0); 
+                                
+                                        //ローディングアニメを配置
+                                        $('#loading').show();
+
+                                        n = 0
+                                        //75 recnum 75    30 + 15    
+
+
+                                  
+                                        if(displayNum > search_thumbnail_num){
+                              
+                                            //105       30                          
+                                            recNum -=  (displayNum + search_thumbnail_num)
+                                            $("#next-button").show();
+                                            // $('#back-button').css('width','49%');
+                                            // alert(recNum)
+                                        }else{
+                                            
+                                            recNum -= displayNum*2 //一回の表示件数×２倍件数戻る 
+                                            // if(recNum<=0){
+                                            //     $('#back-button').hide(); //前へボタンをかくす
+                                            //     $('#next-button').css('width','100%');
+                                            // }
+                                            // alert($(".search-thumbnail").length)
+                                        }
+                                        //一ページ目に戻ったら「前へ」ボタンを隠す
+                                        if(recNum<=0){
+                                                $('#back-button').hide(); //前へボタンをかくす
+                                                $('#next-button').css('width','100%');
+                                            }
+
+                                        
+                                        outCtrl();
+
+                                    
+
+
+                                    });
+
+
+
+                                    callnum = 0
+                                    //ページ表示制御処理
+                                    function outCtrl() {
+                                        if(searchList.length == 0){
+                                            $('.search-num').text("検索結果:" + searchList.length + "件");
+                                        }else{
+                                            $('.search-num').text("検索結果:" + searchList.length + " 件中 "+ page + " ページ目");
+                                        }
+                                   
+                                        //全画像の読み込み終了を検知
+                                        $('#container').imagesLoaded(function () {
+                                                //検索キーが同一（＝ブラウザバック時とする）のとき前回位置までスクロール                                                                     
+                                                    if(location.search == storage.locationsearch){
+                                                        $('body, html').scrollTop(storage.pageYOffset)                 
+                                                    }
+                                            $('.article-summary.article-hidden').css('visibility', 'visible').hide().fadeIn('slow')
+                                            $('article').removeClass("article-hidden");
+                                            //ローディングアニメの消去
+                                            $('#loading').hide()
+                                        
+                                            imgchk()　          //非表示画像の再読み込み
+                                            // callnum += displayNum;
+                                        });
+
+                                        while (n < displayNum && recNum < searchList.length) {
+                                            outPut(recNum)
+                                            recNum++
+                                            n++;
+                                        }
+                                    }
+                                    //記事追加
+                                    function outPut(idx) {
+                                   
+                                    $('.article-row').append(
+                                        '<article class="article article-summary article-hidden" style="visibility: hidden;"><div class="article-summary-inner">' +
+                                        '<a href="' + searchList[idx].split("|")[0] + ' " class="thumbnail">' +
+                                        '<span style="background-color: rgb(239, 239, 239);background-image:url(' + searchList[idx].split("|")[1] + '" alt="' + searchList[idx].split("|")[2] + '" class="search-thumbnail thumbnail-image"><img class="playmark" style="" src="/images/play.png"></span></a>' +
+                                        '<h1 class="article-title" itemprop="name">' +
+                                        '<a href="' + searchList[idx].split("|")[0] + '"><p class="text-overflow-ellipsis">' + searchList[idx].split("|")[2] + '</p></a>' +
+                                        '</h1></div></article>'
+                                    );
+                                    //次の〇〇件を読むボタンの表示・非表示
+                                    if (n + 1 == displayNum) { //1ページに表示最大件数まで表示したとき
+                                      
+                                        if (searchList.length > (recNum + 1)) { //もしもサーチリストにまだ残りがあるなら
+                                            if (searchList.length - (recNum + 1) < displayNum) {
+                                                $('#next-button').text('　次の' + (searchList.length - (recNum + 1)) + '件 >>')
+                                            } else {
+                                                $('#next-button').text('　次の' + displayNum + '件 >>')
+                                            }
+                                            $('#back-button').text('<< 前の' + displayNum + '件　')
+                                        }
+                                    }
+                                    if (searchList.length <= recNum + 1) {
+                                        //次へボタンを隠す
+                                        $("#next-button").hide();
+                                        // alert("satirisuto"+searchList.length)
+                                        // alert("かくす"+recNum + 1)
+                                        // $('#back-button').css('width','100%');
+                                        // $("#back-button").hide();
+                                    }
+                                  }
+                    }                                  
+//-----------------------------------------------------------------------------------------------------------------------------------------
+                                                
+
+                            </script>
+
+                            <!-- 検索結果表示部分 -->
+                            <section class="archives-wrap">
+                                <div class="archives">
+                                    <div class="article-row">
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- 次の○○件を表示するボタンcss -->
+                            <div class="next-button-area" style="text-align: center;display: none">
+                              <p id="back-button"></p>
+                              <p id="next-button"></p>
+                            </div>
+                            <script>
+                                $('.next-button-area').hover(
+                                    function () {
+                                        //検索ボタンにマウスを乗せたらカーソルが変わる
+                                        $(this).css("cursor", "pointer");
+                                    });
+                            </script>
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <footer id="footer">
+            <div class="container">
+                <div class="container-inner">
+                    <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+                    <div class="credit">
+                        <h1 class="logo-wrap">
+
+                            <a href="/">
+                                <img src="../images/dougaone-white.png" style="" class="">
+
+                            </a>
+                        </h1>
+                        <p>© 2020 DougaOne</p>
+
+                    </div>
+                    <div class="footer-plugins">
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        var disqus_shortname = 'hexo-theme-hueman';
+        (function () {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+    <script src=".. /libs/lightgallery/js/lightgallery.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-thumbnail.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-pager.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-autoplay.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-fullscreen.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-zoom.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-hash.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-share.min.js"></script>
+    <script src=".. /libs/lightgallery/js/lg-video.min.js"></script>
+    <script src=".. /libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    <!-- Custom Scripts -->
+    <script src="../js/main.js"></script>
+
+</body>
+
+</html>
